@@ -1,12 +1,19 @@
 module CONFIG
   SERVER      = 'irc.twitch.tv'
   PORT        = 6667
-  USER        = 'nasabot'
-  PASSWORD    = 'oauth:reraky3k3yh9hhvv1rhs0hzi63moc1'
+  USER        = 'asdasd'
+  PASSWORD    = 'oauth:asdasd'
   
-  PASTBIN_KEY = '4a062dd244dd6820638e88f30e81b670'
+  PASTBIN_KEY = 'asdasd'
   
-  ADMINS       = ["subecx", "zagitta"]
+  TWITTER_CONSUMER_KEY = "asdsa"
+  TWITTER_CONSUMER_SECRET = "asdasasd"
+  TWITTER_ACCESS_TOKEN = "adsasdasd-asdasdad"
+  TWITTER_ACCESS_SECRET = "asddaasdads"
+  
+  STEAM_KEY   = "asdadasdasd"
+  
+  ADMINS      = ["asdsadasd", "asdasdsd"]
   
   LOGFILE     = './logs/%s.log' 
   LOGTRUNCATE = 100
