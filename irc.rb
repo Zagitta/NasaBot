@@ -50,7 +50,7 @@ class IRC
   end
   
   def read_stream
-    Signal.trap("HUP") { @running = false }
+    Signal.trap("HUP") { @running = false } unless (RUBY_PLATFORM =~ /mswin|msys|mingw|cygwin|bccwin|wince|emc/) > 0
     messages = Thread.new {
       while @running
         sleep(CONFIG::MESSAGEDELAY)
@@ -133,6 +133,7 @@ class IRC
     begin
       message = CONFIG::DEBUG ? message : message[0..CONFIG::LOGTRUNCATE]
       message = " #{message}" if tab
+	  puts message if CONFIG::DEBUG
       @logfile.write("#{message}\n")
       @logfile.flush
     rescue
