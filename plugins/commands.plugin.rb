@@ -86,6 +86,12 @@ class Commands < Plugin
     return @bot.say("pls no spam, #{user}.") if command.length > 15
     return @bot.say("#{user}, dont fucking add spam commands SwiftRage") if output.length >= CONFIG::MESSAGEMAXLENGTH
     
+	
+	case output
+		when /http:\/\/puu.sh\/[\S&&[^.]]+.(jpg|png|jpeg)/i
+			return @bot.say("Go fucking host that shit on imgur, puu.sh links expire!")
+	end
+	
     begin
       @database.execute("INSERT INTO 'commands' VALUES (?, ?);", command, output)
       @bot.say("Added !#{command}.", true)
