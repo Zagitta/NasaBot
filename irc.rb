@@ -50,7 +50,7 @@ class IRC
   end
   
   def read_stream
-    Signal.trap("HUP") { @running = false } unless (RUBY_PLATFORM =~ /mswin|msys|mingw|cygwin|bccwin|wince|emc/) > 0
+    Signal.trap("HUP") { @running = false } unless (RUBY_PLATFORM =~ /mswin|msys|mingw|cygwin|bccwin|wince|emc/) != nil 
     messages = Thread.new {
       while @running
         sleep(CONFIG::MESSAGEDELAY)
