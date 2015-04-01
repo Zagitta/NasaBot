@@ -1,7 +1,4 @@
 require 'net/http'
-#pastebin account:
-#usr = nasabot_bin
-#pwd = 123twitch_ChatAxAx
 
 class Commands < Plugin
   
@@ -10,8 +7,7 @@ class Commands < Plugin
     @database = open_database('commands')
     @database.execute("CREATE TABLE IF NOT EXISTS 'commands' (cmd TEXT PRIMARY KEY, response TEXT);")
     @database.execute("CREATE TABLE IF NOT EXISTS 'commanders' (user TEXT PRIMARY KEY, mode INTEGER, reason TEXT);")
-    @enabled = true
-	
+    @enabled = true	
 	
     @pastebin_url = "http://pastebin.com/api/api_post.php"
     @pastebin_paste_option = "paste"
@@ -205,12 +201,13 @@ class Commands < Plugin
 	return response.body
   end
   
-  def get_list(user, args) #command entry
-    if not @lastLink.empty?
+  def get_list(user, args) #command entry 
+    if not @lastLink.empty?	
 	  currTime = Time.now.to_i  
 	  difference = currTime - @lastDate
-	  
-	  if difference <= @reuploadTime
+	  cooldownTime = @reuploadTime
+
+	  if difference <= cooldownTime
 	    @bot.say("Command list: #{@lastLink}")
 		return
 	  end
@@ -230,7 +227,7 @@ class Commands < Plugin
 	
     response = pastebin_upload(data)
 	
-	if response.start_with?("Bad") #failure	  
+	if response.start_with?("Bad") || response.start_with?("Post") #failure	  
 	  if not @lastLink.empty?
 	    @bot.say("Command list: #{@lastLink}")
 	  else 
