@@ -1,0 +1,20 @@
+module CONFIG
+  SERVER      = 'irc.twitch.tv'
+  PORT        = 6667
+  USER        = 'nasabot'
+  PASSWORD    = 'oauth:reraky3k3yh9hhvv1rhs0hzi63moc1'
+  
+  PASTBIN_KEY = '4a062dd244dd6820638e88f30e81b670'
+  
+  ADMINS       = ["subecx", "zagitta"]
+  
+  LOGFILE     = './logs/%s.log' 
+  LOGTRUNCATE = 100
+  DEBUG       = true
+  VERBOSE     = true
+  MESSAGEDELAY = 3
+  MESSAGEMAXLENGTH = 800
+  MESSAGEPREFIX = ""
+  MESSAGEDELIMITER = " | "
+  
+end
