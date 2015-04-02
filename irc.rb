@@ -40,6 +40,10 @@ class IRC
     @message_queue.add(message, show)    
   end
   
+  def say_raw(message)
+    send "PRIVMSG #{@channel} :#{CONFIG::MESSAGEPREFIX}#{message}"
+  end
+  
   def send_message_queue       
     to_send = @message_queue.next(@message_length)  
 

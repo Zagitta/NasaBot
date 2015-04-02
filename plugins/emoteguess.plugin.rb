@@ -6,6 +6,7 @@ class EmoteGuess < Plugin
     super(bot)
 	
 	@enabled = true
+	@say_raw = false
 	
 	@emoteArray = Array.new
 	jsonEmotes = Net::HTTP.get(URI.parse('http://twitchemotes.com/global.json'))
@@ -36,7 +37,10 @@ class EmoteGuess < Plugin
 	  
 	  resultArray = emotes.select {|word| word.match(reg)} #select all matching
 
-	  @bot.say(resultArray.sample) unless resultArray.empty? #pick one random matching
+	  if @say_raw
+	    @bot.say_raw(resultArray.sample) unless resultArray.empty? #pick one random matching
+	  else
+	    @bot.say(resultArray.sample) unless resultArray.empty? #pick one random matching
 	end
 	
   end
