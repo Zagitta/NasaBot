@@ -39,7 +39,7 @@ class Commands < Plugin
 	if(privs != nil)
 		mode = privs
 	else
-		mode = CONFIG::ADMINS.include?(user) ? 4 : @moderators.include?(user) ? 3 : 1
+		mode = @bot.user_broadcaster?(user) ? 4 : @bot.user_mod?(user) ? 3 : 1
 	end
 	
 	@bot.say("#{user} you're a " + @modes[mode])
