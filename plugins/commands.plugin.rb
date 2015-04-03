@@ -16,6 +16,8 @@ class Commands < Plugin
     @lastLink = ""
 	
     @reuploadTime = 60 * 60 #60sec * 60min, time before it allows a reupload
+	
+	@modes = ["retard", "dude", "cool", "nazi", "hitler"]
   end
   
   # modes:
@@ -28,6 +30,18 @@ class Commands < Plugin
 	  return Integer(row["mode"]), row["reason"]
 	end
 	return nil
+  end
+  
+  def my_mode(user, args)
+	privs, reason = get_privs(user)
+	
+	if(privs != nil)
+		mode = privs
+	else
+		mode = CONFIG::ADMINS.include?(user) ? 4 : @moderators.include?(user) ? 3 : 1
+	end
+	
+	@bot.say("#{user} you're a " + @modes[mode])
   end
   
   def set_mode(user, args)
@@ -44,11 +58,17 @@ class Commands < Plugin
     user = args[0].gsub(/\s*/, '').downcase
 	mode = args[1].gsub(/\s*/, '').downcase
     
+	num = @modes.index(mode)
+	
+	if(num == nil)
+		return @bot.say("Unknown mode, valid modes: " + @modes.join(", "))
+	end
+	
 	reason = args.count > 2 ? args[2..-1].join(' ') : ""
     
     begin 
-      @database.execute("INSERT OR REPLACE INTO 'commanders' VALUES (?, ?, ?);", user, mode, reason)
-      @bot.say("Set mode of #{user} to #{mode}.")
+      @database.execute("INSERT OR REPLACE INTO 'commanders' VALUES (?, ?, ?);", user, num, reason)
+      @bot.say("#{user} is now a #{mode}.")
     rescue SQLite3::ConstraintException
       @bot.say("Error setting mode.", true)
     end
@@ -254,6 +274,7 @@ class Commands < Plugin
     register_command('enable', USER::ALL, 'allowpasta')
     register_command('disable', USER::ALL, 'banpasta')
     register_command('set_mode', USER::BROADCASTER, 'setmode')
+    register_command('my_mode', USER::ALL, 'mymode')
     register_command('get_list', USER::ALL, 'commands') #Pozzuh addition
     register_watcher('find_command')
   end
