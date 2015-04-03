@@ -31,7 +31,8 @@ class Imgur < Plugin
   end
   
   def next_match(user, args)
-	@bot.say(@matches.join(', '))  
+	msg = @matches != nil ? @matches.join(', ') : "No matches"
+	@bot.say(msg)
   end
   
   def register_functions
