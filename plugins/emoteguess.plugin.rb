@@ -41,6 +41,7 @@ class EmoteGuess < Plugin
 	    @bot.say_raw(resultArray.sample) unless resultArray.empty? #pick one random matching
 	  else
 	    @bot.say(resultArray.sample) unless resultArray.empty? #pick one random matching
+	  end
 	end
 	
   end
