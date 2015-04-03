@@ -4,7 +4,7 @@ class International < Plugin
   
   def initialize(bot)
     super(bot)
-    @APIKEY = CONFIG:STEAM_KEY
+    @APIKEY = CONFIG::STEAM_KEY
     @LEAGUEID = 600
     @URL = URI.parse("http://api.steampowered.com/IEconDOTA2_570/GetTournamentPrizePool/v1?key=#{@APIKEY}&leagueid=#{@LEAGUEID}")
   end

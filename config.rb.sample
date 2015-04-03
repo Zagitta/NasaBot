@@ -11,6 +11,8 @@ module CONFIG
   TWITTER_ACCESS_TOKEN = "adsasdasd-asdasdad"
   TWITTER_ACCESS_SECRET = "asddaasdads"
   
+  TEAM_LINK	  = "http://www.gosugamers.net/dota2/teams/asdasdas"
+  
   STEAM_KEY   = "asdadasdasd"
   
   ADMINS      = ["asdsadasd", "asdasdsd"]
