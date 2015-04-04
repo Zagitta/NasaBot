@@ -18,8 +18,11 @@ class Base < Plugin
   end
   
   def set_message_length(user, args)
+    if args.strip.empty?
+      return @bot.say("Max message length: #{@bot.message_length}")
+    end
+  
     length = args.strip.to_i
-    length = CONFIG::MESSAGEMAXLENGTH if length > CONFIG::MESSAGEMAXLENGTH
     @bot.message_length = length
     @bot.say("Set message length to #{length} characters.")
   end

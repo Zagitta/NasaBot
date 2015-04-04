@@ -17,8 +17,6 @@ class Commands < Plugin
 	@reuploadTime = 60 * 60 #60sec * 60min, time before it allows a reupload
 	
 	@modes = ["retard", "dude", "cool", "nazi", "hitler"]
-	
-	@overrideSpam = false
   end
   
   # modes:
@@ -79,14 +77,6 @@ class Commands < Plugin
     @bot.say("Usage: !setmode [USER] [MODE] [REASON].")
   end
   
-  def override_spam
-    @overrideSpam = true
-  end
-  
-  def override_spam_disable
-    @overrideSpam = false
-  end
-  
   def add_command(user, args)
 	
 	privs, reason = get_privs(user)
@@ -112,7 +102,7 @@ class Commands < Plugin
     
     return help if command.empty? || output.empty?
     return @bot.say("pls no spam, #{user}.") if command.length > 15
-    return @bot.say("#{user}, dont fucking add spam commands SwiftRage") if output.length >= CONFIG::MESSAGEMAXLENGTH or @overrideSpam
+    return @bot.say("#{user}, dont fucking add spam commands SwiftRage") if output.length >= CONFIG::MESSAGEMAXLENGTH
     
 	
 	case output
@@ -284,8 +274,6 @@ class Commands < Plugin
     register_command('set_mode', USER::BROADCASTER, 'setmode')
     register_command('my_mode', USER::ALL, 'mymode')
     register_command('get_list', USER::ALL, 'commands') #Pozzuh addition 
-    register_command('override_spam', USER::BROADCASTER) 
-    register_command('override_spam_disable', USER::BROADCASTER)
     register_watcher('find_command')
   end
 end
