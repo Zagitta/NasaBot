@@ -102,7 +102,7 @@ class Commands < Plugin
     
     return help if command.empty? || output.empty?
     return @bot.say("pls no spam, #{user}.") if command.length > 15
-    return @bot.say("#{user}, dont fucking add spam commands SwiftRage") if output.length >= CONFIG::MESSAGEMAXLENGTH
+    return @bot.say("#{user}, dont fucking add spam commands SwiftRage") if output.length >= @bot.message_length
     
 	
 	case output
