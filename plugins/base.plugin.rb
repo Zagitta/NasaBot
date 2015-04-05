@@ -73,6 +73,12 @@ class Base < Plugin
 	@bot.say (@bot.unload_plugin(plugin) and @bot.load_plugin_file(plugin)) ? "Successfully reloaded #{plugin}" : "Couldn't reload #{plugin}" 
   end
   
+  def get_plugins(user, args)
+    plugins = @bot.active_plugins
+	
+	@bot.say("Currently loaded plugins: #{plugins.join(", ")}.")
+  end
+  
   def history_length(user, args)
     data = @bot.message_queue.size
     @bot.say("Duplicate messages ignored for last #{data[:history_length]} messages. (#{data[:history_length] == data[:history_size]})", true)
@@ -91,5 +97,7 @@ class Base < Plugin
 	register_command('load_plugin', USER::BROADCASTER)
 	register_command('unload_plugin', USER::BROADCASTER)
 	register_command('reload_plugin', USER::BROADCASTER)
+	register_command('get_plugins', USER::ALL, 'plugins')
+	
   end
 end

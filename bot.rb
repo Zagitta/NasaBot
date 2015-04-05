@@ -43,12 +43,21 @@ class Bot < IRC
 	return plugin ? true : false
   end
   
+  def active_plugins()
+    array = Array.new
+    Plugin.plugins.each do |plugin|
+	  array << plugin.to_s.downcase
+	end
+	
+	return array
+  end
+  
   def load_plugin_file(name)
-    log "LOADING PLUGIN FROM FILE: #{name}", true if CONFIG::VERBOSE
-	
-    file = "./plugins/" + name + ".plugin.rb"
-	
+    file = "./plugins/" + name + ".plugin.rb"	
 	return false unless File.exists?(file)
+	
+	log "LOADING PLUGIN FROM FILE: #{name}", true if CONFIG::VERBOSE
+	
 	load file
 	update_plugins
 	
@@ -56,7 +65,9 @@ class Bot < IRC
   end
   
   def unload_plugin(name)
+    name = name.downcase
     return false unless plugin_loaded?(name)
+	return false if name == "base"
   
     log "UNLOADING PLUGIN: #{name}", true if CONFIG::VERBOSE
 	
