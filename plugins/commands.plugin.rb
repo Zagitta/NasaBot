@@ -134,7 +134,7 @@ class Commands < Plugin
 		return @bot.say("#{user}, you're banned from deleting commands: #{reason}")
 	end
     
-    command = args.strip
+    command = args.strip.downcase
     command = command[1..-1] if command[0] == '!'
     
     @database.execute("DELETE FROM 'commands' WHERE cmd=?;", command)
@@ -147,7 +147,7 @@ class Commands < Plugin
 	
     case line
 		when /:(.+?)!.+PRIVMSG\s#.+\s:\s*!(\S+)/i
-		command = $2
+		command = $2.downcase
 		user = $1
 		privs, reason = get_privs(user)
 				
