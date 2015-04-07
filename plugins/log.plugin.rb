@@ -1,18 +1,16 @@
+#for channel sing_sing only...
+
 require 'net/http'
 require './config'
 
 class Log < Plugin
   def initialize(bot)
     super(bot)
-	flag = (@bot.channel == "sing_sing") || CONFIG::DEBUG
 	
-	@enabled = flag ? true : false #we only have logs for sing_sing
 	@BASE_URL = "http://overrustlelogs.net/Sing_sing%20chatlog/[[month]]%20[[year]]/userlogs/[[user]].txt"
   end
 
-  def do_log(user, args)
-    return unless @enabled
-	
+  def do_log(user, args)	
 	username = args.strip.empty? ? user : args.strip
 	
 	time = Time.now
@@ -24,9 +22,7 @@ class Log < Plugin
 	@bot.say("User log: #{url}")
   end
    
-  def do_random(user, args) 
-    return unless @enabled
-  
+  def do_random(user, args)   
 	username = args.strip.empty? ? user : args.strip
 	
 	time = Time.now
