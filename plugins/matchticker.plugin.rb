@@ -6,10 +6,16 @@ class Matchticker < Plugin
     super(bot)
 	
 	@matches = nil
-	
-	@thread = Thread.new {
-      while true
-		
+	@lastDate = 0
+	@reuploadTime = 60 * 5 #60sec * 5min
+  end
+  
+  def next_match(user, args)
+	currTime = Time.now.to_i  
+	difference = currTime - @lastDate
+	cooldownTime = @reuploadTime
+
+	if difference >= cooldownTime
 		doc = Nokogiri::HTML(open(CONFIG::TEAM_LINK))
 		
 		@matches = doc.css('#gb-matches > tbody > tr').map { |link|
@@ -20,15 +26,9 @@ class Matchticker < Plugin
 			
 			text
 		}
-				
-        sleep(300)		
-      end
-    }
-	
-  end
-  
-  def next_match(user, args)
-	msg = @matches != nil ? @matches.join(', ') : "No matches"
+	end
+    
+	msg = @matches != nil ? @matches.join(', ') : "No matches found"
 	@bot.say(msg)
   end
   
