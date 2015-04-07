@@ -12,6 +12,7 @@ class Log < Plugin
 
   def do_log(user, args)	
 	username = args.strip.empty? ? user : args.strip
+	username = username.downcase
 	
 	time = Time.now
 	month = time.strftime("%B") #shouldn't be localized
@@ -24,6 +25,7 @@ class Log < Plugin
    
   def do_random(user, args)   
 	username = args.strip.empty? ? user : args.strip
+	username = username.downcase
 	
 	time = Time.now
 	month = time.strftime("%B") #shouldn't be localized
