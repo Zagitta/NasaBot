@@ -156,9 +156,28 @@ class Commands < Plugin
 		end
 		
 		@database.execute("SELECT response FROM commands WHERE cmd=? LIMIT 1;", command) do |result|
-			@bot.say(result[0].gsub(/\[\[user\]\]/, user), @bot.user_mod?(user))
+			@bot.say(process_line(result[0], user), @bot.user_mod?(user))
 		end
 	end
+  end
+  
+  def process_line(line, user)
+    line = line.gsub(/\[\[user\]\]/, user)
+	line = line.gsub(/\[\[rnd\]\]/, rand(1000..100000).to_s)
+  
+    if(line =~ /\[\[rnduser\]\]/)
+	  rnduser = @bot.users.to_a.sample
+	  rnduser = user if rnduser.nil?
+	  line = line.gsub(/\[\[rnduser\]\]/, rnduser)
+	end
+	
+	if(line =~ /\[\[rndmod\]\]/)
+	  rndmod = @bot.moderators.to_a.sample
+      rndmod = user if rndmod.nil?
+	  line = line.gsub(/\[\[rndmod\]\]/, rndmod)
+	end
+	
+	return line
   end
   
   def disable(user, args)
