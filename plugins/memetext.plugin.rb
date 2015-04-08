@@ -33,7 +33,7 @@ class Memetext < Plugin
 
   def meme(user, args)
     mem = ""
-    args.each_char{|c|
+    args.strip.each_char{|c|
       if @cmap[c]
         mem += @cmap[c]
       else
