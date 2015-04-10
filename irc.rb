@@ -46,12 +46,16 @@ class IRC
   end
   
   def send_message_queue       
-    to_send = @message_queue.next(@message_length)  
+	begin
+	    to_send = @message_queue.next(@message_length)  
 
-    return if to_send.empty?
-    sending = to_send.join(CONFIG::MESSAGEDELIMITER)
-    
-    send "PRIVMSG #{@channel} :#{CONFIG::MESSAGEPREFIX}#{sending}"
+		return if to_send.empty?
+		sending = to_send.join(CONFIG::MESSAGEDELIMITER)
+		
+		send "PRIVMSG #{@channel} :#{CONFIG::MESSAGEPREFIX}#{sending}"
+	rescue => error
+		log error
+	end
   end
   
   def read_stream
