@@ -37,6 +37,7 @@ class IRC
   end
   
   def say(message, show = false)
+	log "Queuing message: #{message}"
     @message_queue.add(message, show)    
   end
   
