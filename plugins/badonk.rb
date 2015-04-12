@@ -7,10 +7,10 @@ class Badonk < Plugin
           @bot.say("Reminder to sign petittion to free chat user badonkadonk55: https://www.change.org/p/twitch-tv-unban-my-good-friend-badonkadonk55?just_created=true")    
       end
     }
-    @bot.say("Starting auto unban.")
+    @bot.say("Starting pention.")
   end
 
   def register_functions
-    register_command('start', USER::BROADCASTER, 'startunban')
+    register_command('start', USER::BROADCASTER, 'badonkpention')
   end
 end
