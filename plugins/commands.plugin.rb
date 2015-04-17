@@ -5,8 +5,21 @@ class Commands < Plugin
   def initialize(bot)
     super(bot)
     @database = open_database('commands')
+	@database.execute("PRAGMA foreign_keys = ON;")
     @database.execute("CREATE TABLE IF NOT EXISTS 'commands' (cmd TEXT PRIMARY KEY, response TEXT);")
-    @database.execute("CREATE TABLE IF NOT EXISTS 'commanders' (user TEXT PRIMARY KEY, mode INTEGER, reason TEXT);")
+    @database.execute("CREATE TABLE IF NOT EXISTS 'modes' (name TEXT PRIMARY KEY, mode INTEGER NOT NULL);")
+    @database.execute("CREATE TABLE IF NOT EXISTS 'commanders' (user TEXT PRIMARY KEY, mode TEXT NOT NULL, reason TEXT, FOREIGN KEY(mode) REFERENCES modes(name));")
+	
+	@defaultModes = [["retard", 0],["dude", 1], ["cool", 2], ["nazi", 3],["hitler", 4]]
+		
+	@defaultModes.each do |item|
+		begin
+			@database.execute("INSERT INTO 'modes' VALUES (?, ?);", item)
+		rescue
+			#ignore
+		end
+	end
+	
     @enabled = true	
 	
     @pastebin_url = "http://pastebin.com/api/api_post.php"
@@ -15,8 +28,6 @@ class Commands < Plugin
     @lastDate = 0
     @lastLink = ""
 	@reuploadTime = 60 * 60 #60sec * 60min, time before it allows a reupload
-	
-	@modes = ["retard", "dude", "cool", "nazi", "hitler"]
   end
   
   # modes:
@@ -25,22 +36,42 @@ class Commands < Plugin
   # 2 = 1 + add commands 
   # 3 = 2 + delete 
   def get_privs(user)
-	@database.execute("SELECT mode, reason FROM commanders WHERE user=? LIMIT 1", user) do |row|
-	  return Integer(row["mode"]), row["reason"]
+	@database.execute("SELECT modes.mode, commanders.mode AS name, commanders.reason FROM commanders INNER JOIN modes ON commanders.mode = modes.name WHERE user=? LIMIT 1;", user) do |row|
+		reason = row["reason"]
+		
+		if((not reason.nil?) && reason.empty?)
+			reason = nil
+		end
+		
+		return Integer(row["mode"]), reason, row["name"]
 	end
-	return nil
+	
+	mode = @bot.user_broadcaster?(user) ? 4 : @bot.user_mod?(user) ? 3 : 1
+	
+	return mode, nil, @defaultModes[mode]
+  end
+  
+  def add_mode(user, args)
+  
+    name, mode, rest = args.split(" ")
+	
+	if name.nil? || (mode.nil?)
+      return @bot.say("Usage: !addmode [MODE_NAME] [LEVEL]")
+    end
+	
+	begin
+		@database.execute("INSERT INTO 'modes' VALUES (?,?);", name, mode)
+	rescue SQLite3::ConstraintException
+		return @bot.say("Mode already exists")
+	end
+	
+	@bot.say("Mode added")
   end
   
   def my_mode(user, args)
-	privs, reason = get_privs(user)
-	
-	if(privs != nil)
-		mode = privs
-	else
-		mode = @bot.user_broadcaster?(user) ? 4 : @bot.user_mod?(user) ? 3 : 1
-	end
-	
-	@bot.say("#{user} you're a " + @modes[mode])
+	privs, reason, name = get_privs(user)
+		
+	@bot.say("#{user} you're a " + name)
   end
   
   def set_mode(user, args)
@@ -56,20 +87,14 @@ class Commands < Plugin
     	
     user = args[0].gsub(/\s*/, '').downcase
 	mode = args[1].gsub(/\s*/, '').downcase
-    
-	num = @modes.index(mode)
-	
-	if(num == nil)
-		return @bot.say("Unknown mode, valid modes: " + @modes.join(", "))
-	end
-	
-	reason = args.count > 2 ? args[2..-1].join(' ') : ""
+    	
+	reason = args.count > 2 ? args[2..-1].join(' ') : nil
     
     begin 
-      @database.execute("INSERT OR REPLACE INTO 'commanders' VALUES (?, ?, ?);", user, num, reason)
+      @database.execute("INSERT OR REPLACE INTO 'commanders' VALUES (?, ?, ?);", user, mode, reason)
       @bot.say("#{user} is now a #{mode}.")
     rescue SQLite3::ConstraintException
-      @bot.say("Error setting mode.", true)
+      @bot.say("Invalid mode.")
     end
   end  
   
@@ -79,16 +104,12 @@ class Commands < Plugin
   
   def add_command(user, args)
 	
-	privs, reason = get_privs(user)
+	privs, reason, name = get_privs(user)
 	
-    if (privs == nil && @bot.user_mod?(user) == false)
-      return @bot.say("#{user}, only mods and whitelisted people are allowed to add commands")
-    end
-    
-	if(privs != nil && privs < 2)
-		return @bot.say("#{user}, you're banned from adding commands: #{reason}")
+	if(privs < 2)
+	 	return @bot.say("#{user} you're a #{name} and " + reason.nil? ? "only mods and whitelisted people are allowed to add commands" : "banned because: #{reason}")
 	end
-	
+		
 	if args.strip.empty?
       return help
     end
@@ -124,15 +145,12 @@ class Commands < Plugin
   
   def delete_command(user, args)
   
-	privs, reason = get_privs(user)
+	privs, reason, name = get_privs(user)
 	
-    if (privs == nil && @bot.user_mod?(user) == false)
-      return @bot.say("#{user}, only mods and whitelisted people are allowed to delete commands")
-    end
-    
-	if(privs != nil && privs < 3)
-		return @bot.say("#{user}, you're banned from deleting commands: #{reason}")
+	if(privs < 3)
+	 	return @bot.say("#{user} you're a #{name} and " + reason.nil? ? "only mods and whitelisted people are allowed to delete commands" : "banned because: #{reason}")
 	end
+	
     
     command = args.strip.downcase
     command = command[1..-1] if command[0] == '!'
@@ -149,10 +167,10 @@ class Commands < Plugin
 		when /:(.+?)!.+PRIVMSG\s#.+\s:\s*!(\S+)/i
 		command = $2.downcase
 		user = $1
-		privs, reason = get_privs(user)
-				
-		if(privs != nil && privs < 1)
-			return @bot.say("#{user}, you're banned from using commands: #{reason}")
+		privs, reason, name = get_privs(user)
+		
+		if(privs < 1)
+			return @bot.say("#{user} you're a #{name} and bannned from using commands" + reason.nil? ? "" : " because: #{reason}")
 		end
 		
 		@database.execute("SELECT response FROM commands WHERE cmd=? LIMIT 1;", command) do |result|
@@ -182,32 +200,25 @@ class Commands < Plugin
   
   def disable(user, args)
   
-	privs, reason = get_privs(user)
+	privs, reason, name = get_privs(user)
 	
-    if (privs == nil && @bot.user_mod?(user) == false)
-      return @bot.say("#{user}, only mods and whitelisted people are allowed to delete commands")
-    end
-    
-	if(privs != nil && privs < 3)
-		return @bot.say("#{user}, you're banned from disabling commands: #{reason}")
+	if(privs < 3)
+	 	return @bot.say("#{user} you're a #{name} and " + reason.nil? ? "only mods and whitelisted people are allowed to disable commands" : "banned because: #{reason}")
 	end
-     
+	     
     @enabled = false
     @bot.say("NAZI MODS!!!!!!!!!!!!", true)
   end
   
   def enable(user, args)  
   
-	privs, reason = get_privs(user)
+	privs, reason, name = get_privs(user)
 	
-    if (privs == nil && @bot.user_mod?(user) == false)
-      return @bot.say("#{user}, only mods and whitelisted people are allowed to delete commands")
-    end
-    
-	if(privs != nil && privs < 3)
-		return @bot.say("#{user}, you're banned from enabling commands: #{reason}")
+	if(privs < 3)
+	 	return @bot.say("#{user} you're a #{name} and " + reason.nil? ? "only mods and whitelisted people are allowed to enable commands" : "banned because: #{reason}")
 	end
-     
+	privs, reason = get_privs(user)
+	     
     @enabled = true
     @bot.say("FREEDOM!!!!!!!!!!!!", true)
   end
@@ -245,6 +256,14 @@ class Commands < Plugin
   end
   
   def get_list(user, args) #command entry 
+  
+	privs, reason, name = get_privs(user)
+	
+	if(privs < 1)
+	 	return @bot.say("#{user} you're a #{name} and bannned from using commands" + reason.nil? ? "" : " because: #{reason}")
+	end
+  
+  
     if not @lastLink.empty?	
 	  currTime = Time.now.to_i  
 	  difference = currTime - @lastDate
@@ -291,6 +310,7 @@ class Commands < Plugin
     register_command('enable', USER::ALL, 'allowpasta')
     register_command('disable', USER::ALL, 'banpasta')
     register_command('set_mode', USER::BROADCASTER, 'setmode')
+    register_command('add_mode', USER::BROADCASTER, 'addmode')
     register_command('my_mode', USER::ALL, 'mymode')
     register_command('get_list', USER::ALL, 'commands') #Pozzuh addition 
     register_watcher('find_command')
