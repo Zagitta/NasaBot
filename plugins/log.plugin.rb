@@ -6,6 +6,8 @@ require './config'
 class Log < Plugin
   def initialize(bot)
     super(bot)
+    @database = open_database('chatlog')
+    @database.execute("CREATE TABLE IF NOT EXISTS 'chatlog' (id INTEGER PRIMARY KEY, user TEXT, time INTEGER, message TEXT);")
 	
 	@BASE_URL = "http://overrustlelogs.net/Sing_sing%20chatlog/[[month]]%20[[year]]/userlogs/[[user]].txt"
   end
@@ -65,8 +67,20 @@ class Log < Plugin
 	@bot.say("#{username}: #{msg}")
   end
   
+  def log_chat(line)
+    case line
+		when /:(.+?)!.+PRIVMSG #.+ :(.*)/i
+			user = $1
+			message = $2
+			time = Time.now.to_i
+			
+			@database.execute("INSERT INTO chatlog(user,time,message) VALUES(?,?,?)", user, time, message)
+	end
+  end
+  
   def register_functions
     register_command('do_log', USER::ALL, 'log')
     register_command('do_random', USER::ALL, 'random')
+    register_watcher('log_chat')
   end
 end
