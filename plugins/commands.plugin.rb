@@ -303,6 +303,20 @@ class Commands < Plugin
 	end
   end
   
+  def gj_list(user, args)
+  
+	privs, reason, name = get_privs(user)
+	
+	if(privs < 1)
+	 	return @bot.say("#{user} you're a #{name} and bannned from using commands" + reason.nil? ? "" : " because: #{reason}")
+	end
+	
+
+	@database.execute("SELECT response FROM commands WHERE cmd LIKE 'gj%';", command) do |result|
+		@bot.say(process_line(result[0], user), @bot.user_mod?(user))
+	end
+  end
+  
   
   def register_functions
     register_command('add_command', USER::ALL, 'add')
@@ -313,6 +327,7 @@ class Commands < Plugin
     register_command('add_mode', USER::BROADCASTER, 'addmode')
     register_command('my_mode', USER::ALL, 'mymode')
     register_command('get_list', USER::ALL, 'commands') #Pozzuh addition 
+    register_command('gj_list', USER::ALL, 'gjall')
     register_watcher('find_command')
   end
 end
