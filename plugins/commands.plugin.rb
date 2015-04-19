@@ -312,7 +312,7 @@ class Commands < Plugin
 	end
 	
 
-	@database.execute("SELECT response FROM commands WHERE cmd LIKE 'gj%';", command) do |result|
+	@database.execute("SELECT response FROM commands WHERE cmd LIKE 'gj%';") do |result|
 		@bot.say(process_line(result[0], user), @bot.user_mod?(user))
 	end
   end
