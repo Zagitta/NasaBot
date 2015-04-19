@@ -67,6 +67,15 @@ class Log < Plugin
 	@bot.say("#{username}: #{msg}")
   end
   
+  def do_top(user, args)
+	@database.execute("select count(1) as cnt, user from chatlog GROUP BY user ORDER BY count(1) DESC LIMIT 1;") 
+		do |row|
+			user = row["user"]
+			count = row["cnt"]
+			return @bot.say("The current top spammer is #{user} with #{count} lines!")
+		end
+  end
+  
   def log_chat(line)
     case line
 		when /:(.+?)!.+PRIVMSG #.+ :(.*)/i
@@ -81,6 +90,7 @@ class Log < Plugin
   def register_functions
     register_command('do_log', USER::ALL, 'log')
     register_command('do_random', USER::ALL, 'random')
-    register_watcher('log_chat')
+    register_command('do_top', USER::ALL, 'spammer')
+	register_watcher('log_chat')
   end
 end
