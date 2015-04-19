@@ -68,8 +68,7 @@ class Log < Plugin
   end
   
   def do_top(user, args)
-	@database.execute("select count(1) as cnt, user from chatlog GROUP BY user ORDER BY count(1) DESC LIMIT 1;") 
-		do |row|
+	@database.execute("select count(1) as cnt, user from chatlog GROUP BY user ORDER BY count(1) DESC LIMIT 1;") do |row|
 			user = row["user"]
 			count = row["cnt"]
 			return @bot.say("The current top spammer is #{user} with #{count} lines!")
