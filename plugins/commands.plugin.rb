@@ -48,7 +48,7 @@ class Commands < Plugin
 	
 	mode = @bot.user_broadcaster?(user) ? 4 : @bot.user_mod?(user) ? 3 : 1
 	
-	return mode, nil, @defaultModes[mode]
+	return mode, nil, @defaultModes[mode][0]
   end
   
   def add_mode(user, args)
