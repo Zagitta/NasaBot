@@ -107,7 +107,7 @@ class Commands < Plugin
 	privs, reason, name = get_privs(user)
 	
 	if(privs < 2)
-	 	return @bot.say("#{user} you're a #{name} and " + reason.nil? ? "only mods and whitelisted people are allowed to add commands" : "banned because: #{reason}")
+	 	return @bot.say("#{user} you're a #{name} and " + (reason.nil? ? "only mods and whitelisted people are allowed to add commands" : "banned because: #{reason}"))
 	end
 		
 	if args.strip.empty?
@@ -148,7 +148,7 @@ class Commands < Plugin
 	privs, reason, name = get_privs(user)
 	
 	if(privs < 3)
-	 	return @bot.say("#{user} you're a #{name} and " + reason.nil? ? "only mods and whitelisted people are allowed to delete commands" : "banned because: #{reason}")
+	 	return @bot.say("#{user} you're a #{name} and " + (reason.nil? ? "only mods and whitelisted people are allowed to delete commands" : "banned because: #{reason}"))
 	end
 	
     
@@ -170,7 +170,7 @@ class Commands < Plugin
 		privs, reason, name = get_privs(user)
 		
 		if(privs < 1)
-			return @bot.say("#{user} you're a #{name} and bannned from using commands" + reason.nil? ? "" : " because: #{reason}")
+			return @bot.say("#{user} you're a #{name} and bannned from using commands" + (reason.nil? ? "" : " because: #{reason}"))
 		end
 		
 		@database.execute("SELECT response FROM commands WHERE cmd=? LIMIT 1;", command) do |result|
@@ -203,7 +203,7 @@ class Commands < Plugin
 	privs, reason, name = get_privs(user)
 	
 	if(privs < 3)
-	 	return @bot.say("#{user} you're a #{name} and " + reason.nil? ? "only mods and whitelisted people are allowed to disable commands" : "banned because: #{reason}")
+	 	return @bot.say("#{user} you're a #{name} and " + (reason.nil? ? "only mods and whitelisted people are allowed to disable commands" : "banned because: #{reason}"))
 	end
 	     
     @enabled = false
@@ -215,7 +215,7 @@ class Commands < Plugin
 	privs, reason, name = get_privs(user)
 	
 	if(privs < 3)
-	 	return @bot.say("#{user} you're a #{name} and " + reason.nil? ? "only mods and whitelisted people are allowed to enable commands" : "banned because: #{reason}")
+	 	return @bot.say("#{user} you're a #{name} and " + (reason.nil? ? "only mods and whitelisted people are allowed to enable commands" : "banned because: #{reason}"))
 	end
 	privs, reason = get_privs(user)
 	     
@@ -260,7 +260,7 @@ class Commands < Plugin
 	privs, reason, name = get_privs(user)
 	
 	if(privs < 1)
-	 	return @bot.say("#{user} you're a #{name} and bannned from using commands" + reason.nil? ? "" : " because: #{reason}")
+	 	return @bot.say("#{user} you're a #{name} and bannned from using commands" + (reason.nil? ? "" : " because: #{reason}"))
 	end
   
   
@@ -308,7 +308,7 @@ class Commands < Plugin
 	privs, reason, name = get_privs(user)
 	
 	if(privs < 1)
-	 	return @bot.say("#{user} you're a #{name} and bannned from using commands" + reason.nil? ? "" : " because: #{reason}")
+	 	return @bot.say("#{user} you're a #{name} and bannned from using commands" + (reason.nil? ? "" : " because: #{reason}"))
 	end
 	
 
