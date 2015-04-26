@@ -88,7 +88,7 @@ class Log < Plugin
   
   def register_functions
     register_command('do_log', USER::ALL, 'log')
-    register_command('do_random', USER::ALL, 'random')
+    //register_command('do_random', USER::ALL, 'random')
     register_command('do_top', USER::ALL, 'spammer')
 	register_watcher('log_chat')
   end
