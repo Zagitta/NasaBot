@@ -303,7 +303,7 @@ class Commands < Plugin
 	end
   end
   
-  def gj_list(user, args)
+  def random(user, args)
   
 	privs, reason, name = get_privs(user)
 	
@@ -312,7 +312,7 @@ class Commands < Plugin
 	end
 	
 
-	@database.execute("SELECT response FROM commands WHERE cmd LIKE 'gj%';") do |result|
+	@database.execute("SELECT response FROM commands ORDER BY RANDOM() LIMIT 1;") do |result|
 		@bot.say(process_line(result[0], user), @bot.user_mod?(user))
 	end
   end
@@ -327,7 +327,7 @@ class Commands < Plugin
     register_command('add_mode', USER::BROADCASTER, 'addmode')
     register_command('my_mode', USER::ALL, 'mymode')
     register_command('get_list', USER::ALL, 'commands') #Pozzuh addition 
-    register_command('gj_list', USER::ALL, 'gjall')
+    register_command('random', USER::ALL, 'randomcmd')
     register_watcher('find_command')
   end
 end
