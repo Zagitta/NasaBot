@@ -312,8 +312,12 @@ class Commands < Plugin
 	end
 	
 
-	@database.execute("SELECT response FROM commands ORDER BY RANDOM() LIMIT 1;") do |result|
-		@bot.say(process_line(result[0], user), @bot.user_mod?(user))
+	@database.execute("SELECT cmd, response FROM commands ORDER BY RANDOM() LIMIT 1;") do |result|
+		
+		cmd = result["cmd"]
+		response = "!#{cmd}: " + process_line(result["response"], user)
+		
+		@bot.say(response, @bot.user_mod?(user))
 	end
   end
   
