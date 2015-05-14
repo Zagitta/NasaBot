@@ -8,6 +8,8 @@ class Log < Plugin
     super(bot)
     @database = open_database('chatlog')
     @database.execute("CREATE TABLE IF NOT EXISTS 'chatlog' (id INTEGER PRIMARY KEY, user TEXT, time INTEGER, message TEXT);")
+    @database.execute("CREATE INDEX IF NOT EXISTS 'idx_chatlog_username' ON 'chat_log' (user);")
+    @database.execute("CREATE INDEX IF NOT EXISTS 'idx_chatlog_username' ON 'chat_log' (time);")
 	
 	@BASE_URL = "http://overrustlelogs.net/Sing_sing%20chatlog/[[month]]%20[[year]]/userlogs/[[user]].txt"
   end
