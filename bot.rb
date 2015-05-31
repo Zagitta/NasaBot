@@ -180,7 +180,10 @@ class Bot < IRC
   
   def start
     self.connect
-    self.read_stream
+	
+	self.send("CAP REQ :twitch.tv/commands")
+	
+    self.read_stream	
   end
   
 end
