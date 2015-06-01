@@ -31,7 +31,7 @@ class International < Plugin
   end
   
   def register_functions
-    register_command('pricepool', USER::ALL, 'ti4')
+    register_command('pricepool', USER::ALL, 'ti5')
     #register_command('gpm', USER::ALL, 'gpm')
   end
 end
