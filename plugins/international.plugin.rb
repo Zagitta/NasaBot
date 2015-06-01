@@ -5,7 +5,7 @@ class International < Plugin
   def initialize(bot)
     super(bot)
     @APIKEY = CONFIG::STEAM_KEY
-    @LEAGUEID = 600
+    @LEAGUEID = 2733
     @URL = URI.parse("http://api.steampowered.com/IEconDOTA2_570/GetTournamentPrizePool/v1?key=#{@APIKEY}&leagueid=#{@LEAGUEID}")
   end
   
@@ -21,7 +21,7 @@ class International < Plugin
     beginTime = 1399701600 #2014-05-10 08:00:00 +0200
     difTimeMin = (Time.now.to_i - beginTime) / 60
     
-    stringMoney = Net::HTTP.get(URI.parse('http://dota2.cyborgmatt.com/prizetracker/overlay.php?leagueid=600'))
+    stringMoney = Net::HTTP.get(URI.parse('http://dota2.cyborgmatt.com/prizetracker/overlay.php?leagueid=' + @LEAGUEID))
     intMoney = stringMoney.to_i - 1600000 # base prize pool
     
     gpmRaised = intMoney / difTimeMin
@@ -32,6 +32,6 @@ class International < Plugin
   
   def register_functions
     register_command('pricepool', USER::ALL, 'ti4')
-    register_command('gpm', USER::ALL, 'gpm')
+    #register_command('gpm', USER::ALL, 'gpm')
   end
 end
