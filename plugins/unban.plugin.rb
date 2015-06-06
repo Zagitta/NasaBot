@@ -15,7 +15,7 @@ class Unban < Plugin
 	    
 	  if not data.nil? then
 	    @bot.send "PRIVMSG #{@bot.channel} :.unban #{user}"
-        @bot.say "Automatically unbanned #{user}", true	
+        #@bot.say "Automatically unbanned #{user}", true	
 	  end
 	    
 	end
