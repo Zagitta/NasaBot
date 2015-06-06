@@ -13,8 +13,7 @@ class Asplergs < Plugin
 		user = $1
 		
 		if(user == "asplosions" && (@rng.rand(1.0) < 0.05))
-			return @bot.say("stfu asplosions nobody likes you"))
-		end
+			return @bot.say("stfu asplosions nobody likes you")
 		end
 	end
   end
