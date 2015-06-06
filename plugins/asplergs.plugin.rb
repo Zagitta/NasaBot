@@ -12,7 +12,7 @@ class Asplergs < Plugin
 		command = $2.downcase
 		user = $1
 		
-		if(user == "asplosions" && (@rng.rand(1.0) < 0.05)
+		if(user == "asplosions" && (@rng.rand(1.0) < 0.05))
 			return @bot.say("stfu asplosions nobody likes you"))
 		end
 		end
