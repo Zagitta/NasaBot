@@ -9,7 +9,7 @@ class Unban < Plugin
   def check_ban(line)
     case line
       when /:.+CLEARCHAT.+:(.+)/i
-      user = $1
+      user = $1.strip().downcase()
 	  
 	  @database.execute("SELECT user FROM 'users' WHERE user LIKE ?;", user) do |row|
 	    @bot.send "PRIVMSG #{@bot.channel} :.unban #{user}"
@@ -31,10 +31,10 @@ class Unban < Plugin
 	flag = (args[1] == "true" or args[1] == "1") ? true : false
 	
 	if flag then
-	  @database.execute("INSERT INTO 'users' VALUES (?);", user)
+	  @database.execute("INSERT INTO 'users' VALUES (?);", user.strip().downcase())
 	  @bot.say "Added #{user} to auto-unban."
 	else
-	  @database.execute("DELETE FROM 'users' WHERE user = ?;", user)
+	  @database.execute("DELETE FROM 'users' WHERE user = ?;", user.strip().downcase())
 	  @bot.say "Removed #{user} from auto-unban."
 	end
   end
