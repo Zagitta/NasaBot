@@ -10,14 +10,11 @@ class Unban < Plugin
     case line
       when /:.+CLEARCHAT.+:(.+)/i
       user = $1
-	   
-	  data = @database.execute("SELECT user FROM 'users' WHERE user LIKE ?;", user)
-	    
-	  if not data.nil? then
+	  
+	  @database.execute("SELECT user FROM 'users' WHERE user LIKE ?;", user) do |row|
 	    @bot.send "PRIVMSG #{@bot.channel} :.unban #{user}"
-        #@bot.say "Automatically unbanned #{user}", true	
+		return;
 	  end
-	    
 	end
   end
   
