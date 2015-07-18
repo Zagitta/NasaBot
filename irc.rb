@@ -62,10 +62,14 @@ class IRC
   def read_stream
     Signal.trap("HUP") { @running = false } unless (RUBY_PLATFORM =~ /mswin|msys|mingw|cygwin|bccwin|wince|emc/) != nil 
     messages = Thread.new {
-      while @running
+	  begin
+		while @running
         sleep(CONFIG::MESSAGEDELAY)
         send_message_queue       
       end
+	  rescue => error
+	    log error
+	  end
     }
     begin
       while (line = @socket.readline) && @running
@@ -73,10 +77,7 @@ class IRC
       end
     rescue => error
       log error
-    end
-    #quit
-    exit
-    
+    end 
   end
   
   def irc_handle line   

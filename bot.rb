@@ -179,11 +179,14 @@ class Bot < IRC
   end
   
   def start
-    self.connect
-	
-	self.send("CAP REQ :twitch.tv/commands")
-	
-    self.read_stream	
+    while true
+	self.connect	
+		self.send("CAP REQ :twitch.tv/commands")
+		self.send("CAP REQ :twitch.tv/membership")
+		
+		self.read_stream
+		self.quit
+	end
   end
   
 end
