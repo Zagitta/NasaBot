@@ -27,7 +27,7 @@ class IRC
   end
   
   def quit
-    send "QUIT"
+    send "QUIT" if not @running
     @socket.close
   end
   
@@ -77,6 +77,7 @@ class IRC
       end
     rescue => error
       log error
+	  @running = false
     end 
   end
   

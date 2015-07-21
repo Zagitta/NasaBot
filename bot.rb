@@ -180,12 +180,15 @@ class Bot < IRC
   
   def start
     while true
-	self.connect	
+		now = Time.new
+		self.log "Connecting at #{now}"
+		self.connect	
 		self.send("CAP REQ :twitch.tv/commands")
 		self.send("CAP REQ :twitch.tv/membership")
 		
 		self.read_stream
 		self.quit
+		sleep 30
 	end
   end
   
