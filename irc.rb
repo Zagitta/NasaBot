@@ -64,9 +64,10 @@ class IRC
     messages = Thread.new {
 	  begin
 		while @running
-        sleep(CONFIG::MESSAGEDELAY)
-        send_message_queue       
-      end
+			sleep(CONFIG::MESSAGEDELAY)
+			send_message_queue       
+		end
+		log "Send loop end"
 	  rescue => error
 	    log error
 	  end
@@ -75,7 +76,9 @@ class IRC
       while (line = @socket.readline) && @running
         irc_handle line
       end
+	  log "Read loop end"
     rescue => error
+	  log "Read loop error"
       log error
 	  @running = false
     end 
