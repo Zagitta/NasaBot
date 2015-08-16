@@ -12,14 +12,13 @@ class Unban < Plugin
       when /:.+CLEARCHAT.+:(.+)/i
       user = $1.strip().downcase()
 	  
-	  if unban_all then
+	  if unban_all
 		@bot.send "PRIVMSG #{@bot.channel} :.unban #{user}"
-		return
-	  end
-	  
-	  @database.execute("SELECT user FROM 'users' WHERE user LIKE ?;", user) do |row|
-	    @bot.send "PRIVMSG #{@bot.channel} :.unban #{user}"
-		return
+	  else	  
+		@database.execute("SELECT user FROM 'users' WHERE user LIKE ?;", user) do |row|
+			@bot.send "PRIVMSG #{@bot.channel} :.unban #{user}"
+			return
+		end
 	  end
 	end
   end
@@ -28,7 +27,7 @@ class Unban < Plugin
 	
     args = args.strip
   
-    if args.empty? or args.split.length < 2 or args.split.length > 2
+    if args.empty? or args.split.length != 1
 	  return @bot.say("Usage: !anti_nazi <flag>")
 	end
 	
@@ -37,6 +36,10 @@ class Unban < Plugin
 	flag = (args[0] == "true" or args[0] == "1") ? true : false
 	
 	@unban_all = flag
+	
+	flag = flag ? "Enabled" : "Disabled"
+	
+	@bot.say (flag + " anti nazi mode")
   end
   
   def auto_unban(user, args)
