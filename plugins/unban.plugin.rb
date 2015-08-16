@@ -2,6 +2,7 @@ class Unban < Plugin
   
   def initialize(bot)
     super(bot)
+	@unban_all = false
     @database = open_database('unban')
     @database.execute("CREATE TABLE IF NOT EXISTS 'users' (user TEXT PRIMARY KEY);")
   end
@@ -11,11 +12,31 @@ class Unban < Plugin
       when /:.+CLEARCHAT.+:(.+)/i
       user = $1.strip().downcase()
 	  
+	  if unban_all then
+		@bot.send "PRIVMSG #{@bot.channel} :.unban #{user}"
+		return
+	  end
+	  
 	  @database.execute("SELECT user FROM 'users' WHERE user LIKE ?;", user) do |row|
 	    @bot.send "PRIVMSG #{@bot.channel} :.unban #{user}"
-		return;
+		return
 	  end
 	end
+  end
+  
+  def anti_nazi(user, args)
+	
+    args = args.strip
+  
+    if args.empty? or args.split.length < 2 or args.split.length > 2
+	  return @bot.say("Usage: !anti_nazi <flag>")
+	end
+	
+	args = args.split
+	
+	flag = (args[0] == "true" or args[0] == "1") ? true : false
+	
+	@unban_all = flag
   end
   
   def auto_unban(user, args)
@@ -42,5 +63,6 @@ class Unban < Plugin
   def register_functions
     register_watcher('check_ban')
 	register_command('auto_unban', USER::BROADCASTER)
+	register_command('anti_nazi', USER::BROADCASTER)
   end
 end
