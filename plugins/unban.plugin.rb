@@ -12,7 +12,7 @@ class Unban < Plugin
       when /:.+CLEARCHAT.+:(.+)/i
       user = $1.strip().downcase()
 	  
-	  if unban_all
+	  if @unban_all
 		@bot.send "PRIVMSG #{@bot.channel} :.unban #{user}"
 	  else	  
 		@database.execute("SELECT user FROM 'users' WHERE user LIKE ?;", user) do |row|
